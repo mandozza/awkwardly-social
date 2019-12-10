@@ -53,36 +53,33 @@ require('chai')
                 oldAuthorBalance = await web3.eth.getBalance(author)
                 oldAuthorBalance = new web3.utils.BN(oldAuthorBalance)
 
-               result = await socialNetwork.tipPost(postCount, { from: tipper, value: web3.utils.toWei('1','Ether') })
+                result = await socialNetwork.tipPost(postCount, { from: tipper, value: web3.utils.toWei('1','Ether') })
 
-            //Success
-            const event = result.logs[0].args;
-            assert.equal(event.id.toNumber(), postCount.toNumber(), 'id is correct');
-            assert.equal(event.content, 'This is my first Post', 'content is correct');
-            assert.equal(event.tipAmount, '1000000000000000000', 'tip amount is correct');
-            assert.equal(event.author, author, 'author is correct');
+                //Success
+                const event = result.logs[0].args;
+                assert.equal(event.id.toNumber(), postCount.toNumber(), 'id is correct');
+                assert.equal(event.content, 'This is my first Post', 'content is correct');
+                assert.equal(event.tipAmount, '1000000000000000000', 'tip amount is correct');
+                assert.equal(event.author, author, 'author is correct');
 
-              //track balance
-              let newAuthorBalance
-              newAuthorBalance = await web3.eth.getBalance(author)
-              newAuthorBalance = new web3.utils.BN(newAuthorBalance)
+                //track balance
+                let newAuthorBalance
+                newAuthorBalance = await web3.eth.getBalance(author)
+                newAuthorBalance = new web3.utils.BN(newAuthorBalance)
 
               // tip amount
-              let tipAmount
-              tipAmount = web3.utils.toWei('1', 'Ether')
-              tipAmount = new web3.utils.BN(tipAmount)
+                let tipAmount
+                tipAmount = web3.utils.toWei('1', 'Ether')
+                tipAmount = new web3.utils.BN(tipAmount)
 
-              const expectedBalance = oldAuthorBalance.add(tipAmount)
+                const expectedBalance = oldAuthorBalance.add(tipAmount)
 
-              assert.equal(newAuthorBalance.toString(), expectedBalance.toString())
+                assert.equal(newAuthorBalance.toString(), expectedBalance.toString())
 
-            //failure tries to tip a post doesn't exist
-            await socialNetwork.tipPost(99, { from: tipper, value: web3.utils.toWei('1', 'Ether')}).should.be.rejected;
-
+                //failure tries to tip a post doesn't exist
+                await socialNetwork.tipPost(99, { from: tipper, value: web3.utils.toWei('1', 'Ether')}).should.be.rejected;
             })
-    
         })
-
     })
 
 
