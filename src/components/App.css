@@ -1,1 +1,16 @@
 /* Styles go here */
+/*
+* white #F5F0EA;
+* green : 368d83;
+* yellow #F3AF06
+* orange #D05C13
+* red #CD3502
+*/
+
+body{
+    background-color: #F5F0EA;
+}
+
+.account-address{
+   color: #F5F0EA;
+}
