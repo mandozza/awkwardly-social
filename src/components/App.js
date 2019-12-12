@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import Navbar from './Navbar'
 import Web3 from 'web3';
-import logo from '../logo.png';
-import SocialNetwork from '..abis/SocialNetwork.json'
+import SocialNetwork from '../abis/SocialNetwork.json'
 import './App.css';
 
 class App extends Component {
@@ -23,7 +22,7 @@ class App extends Component {
       window.web3 = new Web3(window.web3.currentProvider)
     }
     else {
-      window.alert('Non-Ethereum browser detected. You shiould consider trying MetaMask!');
+      window.alert('Non-Ethereum browser detected. You should consider trying MetaMask!');
     }
   }
 
@@ -34,18 +33,21 @@ class App extends Component {
     console.log(accounts)
     this.setState({ account: accounts[0] })
     const networkId = await web3.eth.net.getId()
+    console.log(networkId, 'networkid')
     const networkData = SocialNetwork.networks[networkId]
+    console.log(networkData)
     if(networkData) {
       const socialNetwork = web3.eth.Contract(SocialNetwork.abi, networkData.address)
       this.setState({ socialNetwork })
       const postCount = await socialNetwork.methods.postCount().call() 
+      console.log(postCount)
       this.setState({ postCount })
 
       //load Posts.
       for( var i = 1; i <= postCount; i++) {
-        const post = await socialNetwork.methods.post(i).call()
+        const post = await socialNetwork.methods.posts(i).call()
         this.setState({
-          posts: [...this.state.posts,post]
+          posts: [...this.state.posts, post]
         })
       }
       console.log({ posts: this.state.posts })
@@ -70,27 +72,30 @@ class App extends Component {
         <Navbar account={this.state.account}/>
         <div className="container-fluid mt-5">
           <div className="row">
-            <main role="main" className="col-lg-12 d-flex text-center">
+            <main role="main" className="col-lg-12 ml-auto mr-auto" style={{ maxWidth: '500px' }}>
               <div className="content mr-auto ml-auto">
-                <a
-                  href="http://www.awkwardlysocial.io"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <img src={logo} className="App-logo" alt="logo" />
-                </a>
-                <h1>Awkwardly Social</h1>
-                <p>
-                  Edit <code>src/components/App.js</code> and save to reload.
-                </p>
-                <a
-                  className="App-link"
-                  href="http://www.awkwardlysocial.io"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  LEARN BLOCKCHAIN <u><b>NOW! </b></u>
-                </a>
+                  { this.state.posts.map((post,key) => {
+                      return (
+                        <div className="card mb-4" key={key} >
+                            <div className="card-header">
+                              <small className="text-muted">{post.author}</small>
+                            </div>
+                            <ul id="postList" className="list-group list-group-flush">
+                                <li className="list-group-item">
+                                  <p>{post.content}</p>
+                                </li>
+                                <li key={key} className="list-group-item py-2">
+                                    <small className="float-left mt-1 text-muted">
+                                      Tips: { window.web3.utils.fromWei(post.tipAmount.toString(), 'ether')} ETH
+                                    </small>
+                                    <button className="btn btn-link btn-sm float-right pt-0">
+                                      <span>TIP 0.1 ETH</span>
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+                      )
+                  })}
               </div>
             </main>
           </div>
