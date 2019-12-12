@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Navbar from './Navbar'
 import Web3 from 'web3';
 import logo from '../logo.png';
+import SocialNetwork from '..abis/SocialNetwork.json'
 import './App.css';
 
 class App extends Component {
@@ -32,12 +33,34 @@ class App extends Component {
     const accounts = await web3.eth.getAccounts()
     console.log(accounts)
     this.setState({ account: accounts[0] })
+    const networkId = await web3.eth.net.getId()
+    const networkData = SocialNetwork.networks[networkId]
+    if(networkData) {
+      const socialNetwork = web3.eth.Contract(SocialNetwork.abi, networkData.address)
+      this.setState({ socialNetwork })
+      const postCount = await socialNetwork.methods.postCount().call() 
+      this.setState({ postCount })
+
+      //load Posts.
+      for( var i = 1; i <= postCount; i++) {
+        const post = await socialNetwork.methods.post(i).call()
+        this.setState({
+          posts: [...this.state.posts,post]
+        })
+      }
+      console.log({ posts: this.state.posts })
+    } else {
+      window.alert('SocialNetwork contract has not been deployed to the network.')
+    }
   }
 
   constructor(props) {
     super(props)
     this.state = {
-      account: ''
+      account: '',
+      socialNetwork: null,
+      postCount: 0,
+      posts: []
     }
   }
 
