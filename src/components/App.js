@@ -51,6 +51,11 @@ class App extends Component {
           posts: [...this.state.posts, post]
         })
       }
+      // Sort Posts By highest tipped
+      this.setState({
+        posts: this.state.posts.sort((a,b) => b.tipAmount - a.tipAmount)
+      })
+
       this.setState({ loading: false})
       console.log({ posts: this.state.posts })
     } else {
@@ -69,7 +74,15 @@ class App extends Component {
     })
   }
 
-
+  tipPost(id, tipAmount) {
+    console.log('tipping author')
+    this.setState({ loading: true })
+    this.state.socialNetwork.methods.tipPost(id).send({ from: this.state.account, value: tipAmount })
+    .once('recipt', (receipt) => {
+      console.log('receipt recieved')
+      this.setState({ loading: false })
+    })
+  }
 
 
   constructor(props) {
@@ -82,6 +95,7 @@ class App extends Component {
       loading: true
     }
     this.createPost = this.createPost.bind(this)
+    this.tipPost = this.tipPost.bind(this)
   }
 
   render() {
@@ -93,6 +107,7 @@ class App extends Component {
           : <Main 
                posts={this.state.posts }
                createPost = {this.createPost}
+               tipPost = {this.tipPost}
           />
         }
       </div>

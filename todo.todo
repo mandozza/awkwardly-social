@@ -1,0 +1,5 @@
+- [] clean up Syntax
+- [] clean up change over to functional components
+- [] figure out why we are not getting back reciept call back
+- [] if the user changes in metamask the app should auttocically respond to that change
+- [] intregrate ipfs into app allow users to add image to account.
